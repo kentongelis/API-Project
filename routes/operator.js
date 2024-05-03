@@ -1,15 +1,14 @@
 const express = require('express')
 
 // import all your controllers
+require('../controllers/operators')
 
 // import any middleware
 
 // create routes
 const router = express.Router()
 
-router.post("/create", createOperator)
-router.get("/find/:userId")
-router.get("/find")
-
+router.get('/operator', showOperators)
+router.post('/operators/:search', showOneOperator)
 
 export default router 
