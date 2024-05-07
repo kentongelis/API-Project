@@ -29,10 +29,16 @@ var checkAuth = (req, res, next) => {
 
   next();
 };
-app.use(checkAuth);
+// app.use(checkAuth);
 
 
 // TODO: Add each controller here, after all middleware is initialized.
+
+const operatorRouter = require('./routes/operator')
+const weaponRouter = require('./routes/weapon')
+
+app.use(operatorRouter)
+app.use(weaponRouter)
 
 // add routes to server 
 // app.use("/", )

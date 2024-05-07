@@ -3,6 +3,9 @@
 const mongoose = require('mongoose');
 assert = require('assert');
 
+mongoose.set('strictQuery', false);
+
+
 const url = 'mongodb://localhost/rainbowapi';
 mongoose.connect(
     url,

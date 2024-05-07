@@ -1,34 +1,43 @@
 const User = require("../models/user");
 const jwt = require('jsonwebtoken');
-const Operator = require('../models/operators')
-const Weapon = require('../models/weapon')
-const Utility = require('../models/utility')
-const Faction = require('../models/faction')
+const Operator = require('../models/operator');
+const Weapon = require('../models/weapon');
+const Utility = require('../models/utility');
+const Faction = require('../models/faction');
 
 
-module.exports = (app) => {
-   // Operator Controller
-
-    const showOperators = async(req, res) => {
-        const operators = await Operator.find()
-        return res.status(200).json(operators)
+const showOperators = async(req, res) => {
+    try {
+        const operators = await Operator.find();
+        return res.status(200).json(operators);
+    } catch(err) {
+        console.log(err);
     }
-    exports.showOperator = showOperators;
+}
 
-    const showOneOperator = async(req, res) => {
-        const operators = 
-        ((parseInt(req.params)) === Number) ? await Operator.findById(req.body) : 
-        ((req.params) === String) ? await Operator.findOne({name: req.body}) : ''
-        
-        if (!operators) {
-            return res.status(200).json(operators)
+exports.showOperators = showOperators;
+
+const showOneOperator = async(req, res) => {
+    try {
+        const operator = 
+        (typeof(parseInt(req.params)) === Number) ? await Operator.findById(req.params) : 
+        (typeof(req.params) === String) ? await Operator.findOne({name: req.params}) : '';
+
+        if (!operator) {
+            return res.status(400).json({message: "This operator does not exist"});
         } else {
-            return res.status(400).json({message: "This operator does not exist"})
-        }
-        }
-    exports.showOneOperator = showOneOperator;
+            return res.status(200).json(operator);
+        };
+    } catch(err) {
+        console.log(err);
+    };
+};
 
-    const createOperator = async(req, res) => {
+exports.showOneOperator = showOneOperator;
+
+const createOperator = async(req, res) => {
+    try {
+        console.log(req.body);
         const {name, image, gadget, primaryWeapons, secondaryWeapons, utility, side, faction} = req.body;
         const operator = new Operator();
         operator.name = name;
@@ -44,21 +53,151 @@ module.exports = (app) => {
         }
         for (let i = 0; i < utility.length; i++) {
             let util = Utility.findById(utility[i]);
-            operator.utility.push(util)
+            operator.utility.push(util);
         }
         operator.side = side;
-        operator.faction = Faction.findById(faction)
+        operator.faction = Faction.findById(faction);
 
         operator.save()
-                .catch((err) => {
-                    console.log(err.message)
-                })
+            .catch((err) => {
+                console.log(err.message);
+            });
 
-        return res.status(200).json(operator)
+        return res.status(200).json(operator);
+    } catch(err) {
+        console.log(err);
     }
-    exports.createOperator = createOperator;
+}
 
-    const updateOperator = async(req, res) => {
-        const hello = 'helloi∂'
+exports.createOperator = createOperator;
+
+const updateOperatorNoClass = async(req, res) => {
+    try {
+        const {name, image, gadget, side, faction} = req.body;
+        const fields = {name, image, gadget, side, faction};
+
+        const operator = await Operator.findByIdAndUpdate(req.params, fields, { new: true });
+
+        return res.status(200).json(operator);
+    } catch(err) {
+        console.log(err);
+    };
+};
+
+exports.updateOperatorNoClass = updateOperatorNoClass;
+
+const deleteAndUpdateOperatorPrimaryWeapon = async(req, res) => {
+    try {
+        const {first, second} = req.body;
+        const operator = await Operator.findById(req.params);
+        const removed = await Weapon.findById(first);
+
+        operator.primaryWeapons.splice(operator.primaryWeapons.indexOf(removed),1);
+
+        if (second) {
+        const added = await Weapon.findById(second);
+        operator.primaryWeapons.push(added);
+        }
+
+        operator.save()
+        .catch((err) => {
+        console.log(err.message);
+        })
+
+        return res.status(200).json(operator);
+    } catch(err) {
+        console.log(err);
+    };
+};
+
+exports.deleteAndUpdateOperatorPrimaryWeapon = deleteAndUpdateOperatorPrimaryWeapon;
+
+const deleteAndUpdateOperatorSecondaryWeapon = async(req, res) => {
+    try {
+        const {first, second} = req.body;
+        const operator = await Operator.findById(req.params);
+        const removed = await Weapon.findById(first);
+
+        operator.secondaryWeapons.splice(operator.secondaryWeapons.indexOf(removed),1);
+
+        if (second) {
+        const added = await Weapon.findById(second);
+        operator.secondaryWeapons.push(added);
+        }
+
+        operator.save()
+        .catch((err) => {
+        console.log(err.message);
+        })
+
+        return res.status(200).json(operator);
+    } catch(err) {
+        console.log(err);
+    };
+};
+
+exports.deleteAndUpdateOperatorSecondaryWeapon = deleteAndUpdateOperatorSecondaryWeapon;
+
+const deleteAndUpdateUtility = async(req,res) => {
+    try {
+        const {first, second} = req.body;
+        const operator = await Operator.findById(req.params);
+        const removed = await Utility.findById(first);
+
+        operator.utility.splice(operator.utility.indexOf(removed),1);
+
+        if (second) {
+        const added = await Utility.findById(second);
+        operator.Utility.push(added);
+        }
+
+        operator.save()
+        .catch((err) => {
+        console.log(err.message);
+        })
+
+        return res.status(200).json(operator);
+    } catch(err) {
+        console.log(err);
+    };
+};
+
+exports.deleteAndUpdateUtility = deleteAndUpdateUtility;
+
+const deleteAndUpdateFaction = async(req, res) => {
+    try {
+        const {first, second} = req.body;
+        const operator = await Operator.findById(req.params);
+        const removed = await Faction.findById(first);
+
+        operator.faction.splice(operator.faction.indexOf(removed),1);
+
+        if (second) {
+        const added = await Faction.findById(second);
+        operator.Faction.push(added);
+        }
+
+        operator.save()
+        .catch((err) => {
+        console.log(err.message);
+        })
+
+        return res.status(200).json(operator);
+    } catch(err) {
+        console.log(err)
+    };
+};
+
+exports.deleteAndUpdateFaction = deleteAndUpdateFaction;
+
+const deleteOperator = async(req, res) => {
+    try {
+        await Operator.findByIdAndDelete(req.params);
+
+        return res.status(200).json("Operator successfully deleted");
+    } catch(err) {
+        console.log(err);
     }
-  }
+};
+
+exports.deleteOperator = deleteOperator;
