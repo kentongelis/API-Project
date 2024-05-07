@@ -14,8 +14,8 @@ const base = '/weapon';
 router.get(`${base}`, showWeapons);
 router.post(`${base}/:search`, showOneWeapon);
 router.post(`${base}/create`, createWeapon);
-router.post(`${base}/update/:id`, updateWeaponNoClass);
-router.post(`${base}/update/operator/:id`, deleteAndUpdateOperator);
+router.put(`${base}/update/:id`, updateWeaponNoClass);
+router.put(`${base}/update/operator/:id`, deleteAndUpdateOperator);
 router.delete(`${base}/delete/:id`, deleteWeapon);
 
 module.exports = router;

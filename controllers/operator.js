@@ -36,9 +36,9 @@ const showOneOperator = async(req, res) => {
 exports.showOneOperator = showOneOperator;
 
 const createOperator = async(req, res) => {
+    console.log(req.body);
     try {
-        console.log(req.body);
-        const {name, image, gadget, primaryWeapons, secondaryWeapons, utility, side, faction} = req.body;
+        const {name, image, gadget, primaryWeapons, secondaryWeapons, utility, side, org, faction} = req.body;
         const operator = new Operator();
         operator.name = name;
         operator.image = image;
@@ -56,14 +56,15 @@ const createOperator = async(req, res) => {
             operator.utility.push(util);
         }
         operator.side = side;
+        operator.org = org;
         operator.faction = Faction.findById(faction);
 
-        operator.save()
+        await operator.save()
             .catch((err) => {
                 console.log(err.message);
             });
 
-        return res.status(200).json(operator);
+        return res.status(200).json(operator.name);
     } catch(err) {
         console.log(err);
     }
@@ -73,8 +74,8 @@ exports.createOperator = createOperator;
 
 const updateOperatorNoClass = async(req, res) => {
     try {
-        const {name, image, gadget, side, faction} = req.body;
-        const fields = {name, image, gadget, side, faction};
+        const {name, image, gadget, side, org, faction} = req.body;
+        const fields = {name, image, gadget, side, org, faction};
 
         const operator = await Operator.findByIdAndUpdate(req.params, fields, { new: true });
 

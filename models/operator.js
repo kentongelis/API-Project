@@ -8,6 +8,7 @@ const operatorSchema = new Schema({
     secondaryWeapons: [{ type: Schema.Types.ObjectId, ref: 'Weapon'}],
     utility: [{ type: Schema.Types.ObjectId, ref: 'Utility'}],
     side: { type: String },
+    org: { type: String },
     faction: { type: Schema.Types.ObjectId, ref: 'Faction'}
 }, {timestamps : true });
 

@@ -17,8 +17,8 @@ exports.showWeapons = showWeapons;
 const showOneWeapon = async(req, res) => {
     try {
         const weapon = 
-        (typeof(parseInt(req.params)) === Number) ? await Weapon.findById(req.params) :
-        (typeof(req.params) === String) ? await Weapon.findOne({name: req.params}) : '';
+            (typeof(parseInt(req.params)) === Number) ? await Weapon.findById(req.params) :
+            (typeof(req.params) === String) ? await Weapon.findOne({name: req.params}) : '';
         
         if (!weapon) {
             return res.status(400).json({message: "This Weapon does not exist"});
@@ -41,7 +41,7 @@ const createWeapon = async(req, res) => {
         for (let i = 0; i < operators.length; i++) {
             let operator = Operator.findById(operators[i]);
             weapon.operators.push(operator);
-        }
+        };
         weapon.sights = sights;
         weapon.damage = damage;
         weapon.rof = rof;
@@ -66,7 +66,7 @@ const updateWeaponNoClass = async(req, res) => {
 
         const weapon = await Weapon.findByIdAndUpdate(req.params, fields, { new: true });
 
-        return res.status(200).json(operator);
+        return res.status(200).json(weapon);
 
     } catch(err) {
         console.log(err);
@@ -88,7 +88,7 @@ const deleteAndUpdateOperator = async(req, res) => {
             weapon.operators.push(added);
         }
 
-        operator.save()
+        weapon.save()
             .catch((err) => {
                 console.log(err.message);
             });
