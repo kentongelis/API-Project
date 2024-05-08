@@ -52,12 +52,14 @@ const createFaction = async(req, res) => {
         const faction = new Faction();
         faction.name = name;
         faction.image = image;
-    //     for (let i = 0; i < operators.length; i++) {
-    //         let operator = Operator.findById(operators[i]);
-    //         faction.operators.push(operator);
-    //     };
+        if (operators) {
+            for (let i = 0; i < operators.length; i++) {
+                let operator = Operator.findById(operators[i]);
+                faction.operators.push(operator);
+            };
+        };
 
-        faction.save()
+        await faction.save()
             .catch((err) => {
                 console.log(err.message);
             });
@@ -89,13 +91,15 @@ const deleteAndUpdateOperator = async(req, res) => {
     try {
         const {first, second} = req.body;
         const faction  = await Faction.findById(req.params.id);
-        const removed = await Operator.findById(first);
 
-        faction.operators.splice(faction.operators.indexOf(removed), 1);
+        if (first) {
+            const removed = await Operator.findById(first);
+            faction.operators.splice(faction.operators.indexOf(removed), 1);
+        }
 
         if (second) {
             const added = await Operator.findById(second);
-        faction.operators.push(added);
+            faction.operators.push(added);
         };
 
         faction.save()

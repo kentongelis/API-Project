@@ -52,14 +52,16 @@ const createUtility = async(req, res) => {
         const utility = new Utility();
         utility.name = name;
         utility.image = image;
-        // for (let i = 0; i < operators.length; i++) {
-        //     let operator = Operator.findById(operators[i]);
-        //     utility.operators.push(operator);
-        // };
+        if (operators) {
+            for (let i = 0; i < operators.length; i++) {
+                let operator = Operator.findById(operators[i]);
+                utility.operators.push(operator);
+            };
+        };
         utility.side = side
         utility.purpose = purpose;
 
-        utility.save()
+        await utility.save()
             .catch((err) => {
                 console.log(err.message);
             });
@@ -92,9 +94,11 @@ const deleteAndUpdateOperator = async(req, res) => {
     try {
         const {first, second} = req.body;
         const utility = await Utility.findById(req.params.id);
-        const removed = await Operator.findById(first);
-
-        utility.operators.splice(utility.operators.indexOf(removed),1);
+        
+        if (first) {
+            const removed = await Operator.findById(first);
+            utility.operators.splice(utility.operators.indexOf(removed),1);
+        };
 
         if (second) {
             const added = await Operator.findById(second);

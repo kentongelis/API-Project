@@ -29,10 +29,7 @@ var checkAuth = (req, res, next) => {
 
   next();
 };
-// app.use(checkAuth);
-
-
-// TODO: Add each controller here, after all middleware is initialized.
+app.use(checkAuth);
 
 const operatorRouter = require('./routes/operator');
 const weaponRouter = require('./routes/weapon');
@@ -43,9 +40,6 @@ app.use(operatorRouter);
 app.use(weaponRouter);
 app.use(utilityRouter);
 app.use(factionRouter);
-
-// add routes to server 
-// app.use("/", )
 
 app.listen(3000, () => {
     console.log('API listening on port http://localhost:3000!');

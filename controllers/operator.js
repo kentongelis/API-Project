@@ -50,28 +50,31 @@ const showOperatorById = async(req, res) => {
 exports.showOperatorById = showOperatorById;
 
 const createOperator = async(req, res) => {
-    console.log(req.body);
     try {
         const {name, image, gadget, primaryWeapons, secondaryWeapons, utility, side, org, faction} = req.body;
         const operator = new Operator();
         operator.name = name;
         operator.image = image;
         operator.gadget = gadget;
-        // for (let i = 0; i < primaryWeapons.length; i++) {
-        //     let weapon = Weapon.findById(primaryWeapons[i]);
-        //     operator.primaryWeapons.push(weapon);
-        // }
-        // for (let i = 0; i < secondaryWeapons.length; i++) {
-        //     let weapon = Weapon.findById(secondaryWeapons[i]);
-        //     operator.secondaryWeapons.push(weapon);
-        // }
-        // for (let i = 0; i < utility.length; i++) {
-        //     let util = Utility.findById(utility[i]);
-        //     operator.utility.push(util);
-        // }
+        if (primaryWeapons, secondaryWeapons, utility) {
+            for (let i = 0; i < primaryWeapons.length; i++) {
+                let weapon = await Weapon.findById(primaryWeapons[i]);
+                operator.primaryWeapons.push(weapon);
+            }
+            for (let i = 0; i < secondaryWeapons.length; i++) {
+                let weapon = await Weapon.findById(secondaryWeapons[i]);
+                operator.secondaryWeapons.push(weapon);
+            }
+            for (let i = 0; i < utility.length; i++) {
+                let util = await Utility.findById(utility[i]);
+                operator.utility.push(util);
+            }
+        }
         operator.side = side;
         operator.org = org;
-        // operator.faction = Faction.findById(faction);
+        if (faction) {
+            operator.faction = await Faction.findById(faction);
+        }
 
         await operator.save()
             .catch((err) => {
@@ -105,9 +108,11 @@ const deleteAndUpdateOperatorPrimaryWeapon = async(req, res) => {
     try {
         const {first, second} = req.body;
         const operator = await Operator.findById(req.params.id);
-        const removed = await Weapon.findById(first);
 
-        operator.primaryWeapons.splice(operator.primaryWeapons.indexOf(removed),1);
+        if (first) { 
+            const removed = await Weapon.findById(first);
+            operator.primaryWeapons.splice(operator.primaryWeapons.indexOf(removed),1);
+        };
 
         if (second) {
         const added = await Weapon.findById(second);

@@ -52,15 +52,17 @@ const createWeapon = async(req, res) => {
         const weapon = new Weapon();
         weapon.name = name;
         weapon.image = image;
-        // for (let i = 0; i < operators.length; i++) {
-        //     let operator = Operator.findById(operators[i]);
-        //     weapon.operators.push(operator);
-        // };
+        if (operators) {
+            for (let i = 0; i < operators.length; i++) {
+                let operator = await Operator.findById(operators[i]);
+                weapon.operators.push(operator);
+            };
+        ;}
         weapon.sights = sights;
         weapon.damage = damage;
         weapon.rof = rof;
 
-        weapon.save()
+        await weapon.save()
             .catch((err) => {
                 console.log(err.message);
             });
@@ -93,9 +95,11 @@ const deleteAndUpdateOperator = async(req, res) => {
     try {
         const {first, second} = req.body;
         const weapon = await Weapon.findById(req.params.id);
-        const removed = await Operator.findById(first);
 
-        weapon.operators.splice(weapon.operators.indexOf(removed),1);
+        if (first) {
+            const removed = await Operator.findById(first);
+            weapon.operators.splice(weapon.operators.indexOf(removed),1);
+        };
 
         if (second) {
             const added = await Operator.findById(second);
