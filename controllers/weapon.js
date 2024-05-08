@@ -14,23 +14,37 @@ const showWeapons = async(req, res) => {
 
 exports.showWeapons = showWeapons;
 
-const showOneWeapon = async(req, res) => {
+const showWeaponByName = async(req, res) => {
     try {
-        const weapon = 
-            (typeof(parseInt(req.params)) === Number) ? await Weapon.findById(req.params) :
-            (typeof(req.params) === String) ? await Weapon.findOne({name: req.params}) : '';
+        const weapon =  await Weapon.findOne({name: req.params.name});
         
         if (!weapon) {
             return res.status(400).json({message: "This Weapon does not exist"});
         } else {
-            return res.status(200).json(operator);
+            return res.status(200).json(weapon);
         };
     } catch(err) {
         console.log(err);
     };
 };
 
-exports.showOneWeapon = showOneWeapon;
+exports.showWeaponByName = showWeaponByName;
+
+const showWeaponById = async(req, res) => {
+    try {
+        const weapon = await Weapon.findById(req.params.id);
+
+        if (!weapon) {
+            return res.status(400).json({message: "This Weapon does not exist"});
+        } else {
+            return res.status(200).json(weapon);
+        };
+    } catch(err) {
+        console.log(err);
+    };
+};
+
+exports.showWeaponById = showWeaponById;
 
 const createWeapon = async(req, res) => {
     try {
@@ -38,10 +52,10 @@ const createWeapon = async(req, res) => {
         const weapon = new Weapon();
         weapon.name = name;
         weapon.image = image;
-        for (let i = 0; i < operators.length; i++) {
-            let operator = Operator.findById(operators[i]);
-            weapon.operators.push(operator);
-        };
+        // for (let i = 0; i < operators.length; i++) {
+        //     let operator = Operator.findById(operators[i]);
+        //     weapon.operators.push(operator);
+        // };
         weapon.sights = sights;
         weapon.damage = damage;
         weapon.rof = rof;
@@ -64,7 +78,7 @@ const updateWeaponNoClass = async(req, res) => {
         const {name, image, sights, damage, rof} = req.body;
         const fields = {name, image, sights, damage, rof};
 
-        const weapon = await Weapon.findByIdAndUpdate(req.params, fields, { new: true });
+        const weapon = await Weapon.findByIdAndUpdate(req.params.id, fields, { new: true });
 
         return res.status(200).json(weapon);
 
@@ -78,7 +92,7 @@ exports.updateWeaponNoClass = updateWeaponNoClass;
 const deleteAndUpdateOperator = async(req, res) => {
     try {
         const {first, second} = req.body;
-        const weapon = await Weapon.findById(req.params);
+        const weapon = await Weapon.findById(req.params.id);
         const removed = await Operator.findById(first);
 
         weapon.operators.splice(weapon.operators.indexOf(removed),1);
@@ -93,7 +107,7 @@ const deleteAndUpdateOperator = async(req, res) => {
                 console.log(err.message);
             });
 
-        return res.status(200).json(operator);
+        return res.status(200).json(weapon);
     } catch(err) {
         console.log(err);
     };
@@ -103,7 +117,7 @@ exports.deleteAndUpdateOperator = deleteAndUpdateOperator;
 
 const deleteWeapon = async(req, res) => {
     try {
-        await Weapon.findByIdAndDelete(req.params);
+        await Weapon.findByIdAndDelete(req.params.id);
 
         return res.status(200).json("Weapon successfully deleted");
     } catch(err) {

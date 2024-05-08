@@ -1,5 +1,6 @@
 const { showOperators, 
-        showOneOperator, 
+        showOperatorByName, 
+        showOperatorById,
         createOperator,
         updateOperatorNoClass,
         deleteAndUpdateOperatorPrimaryWeapon,
@@ -18,8 +19,9 @@ const router = express.Router();
 const base = '/operator';
 
 router.get(`${base}`, showOperators);
-router.post(`${base}/:search`, showOneOperator);
 router.post(`${base}/create`, createOperator);
+router.post(`${base}/name/:name`, showOperatorByName);
+router.post(`${base}/id/:id`, showOperatorById);
 router.put(`${base}/update/:id`, updateOperatorNoClass);
 router.put(`${base}/update/primary/:id`, deleteAndUpdateOperatorPrimaryWeapon);
 router.put(`${base}/update/secondary/:id`, deleteAndUpdateOperatorSecondaryWeapon);

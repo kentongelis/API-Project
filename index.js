@@ -34,11 +34,15 @@ var checkAuth = (req, res, next) => {
 
 // TODO: Add each controller here, after all middleware is initialized.
 
-const operatorRouter = require('./routes/operator')
-const weaponRouter = require('./routes/weapon')
+const operatorRouter = require('./routes/operator');
+const weaponRouter = require('./routes/weapon');
+const utilityRouter = require('./routes/utility');
+const factionRouter = require('./routes/faction');
 
-app.use(operatorRouter)
-app.use(weaponRouter)
+app.use(operatorRouter);
+app.use(weaponRouter);
+app.use(utilityRouter);
+app.use(factionRouter);
 
 // add routes to server 
 // app.use("/", )

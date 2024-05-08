@@ -14,24 +14,37 @@ const showUtility = async(req, res) => {
 
 exports.showUtility = showUtility;
 
-const showOneUtility = async(req, res) => {
+const showUtilityByName = async(req, res) => {
     try {
-        const utility =
-            (typeof(parseInt(req.params)) === Number) ? await Utility.findById(req.params) :
-            (typeof(req.params) === String) ? await Utility.findOne({name: req.params}) : '';
+        const utility = await Utility.findOne({name: req.params.name});
 
-            if (!weapon) {
-                return res.status(400).json({message: "This Utility does not Exist"});
-            } else {
-                return res.status(200).json(operator);
-            };
+        if (!utility) {
+            return res.status(400).json({message: "This Utility does not Exist"});
+        } else {
+            return res.status(200).json(utility);
+        };
     } catch(err) {
         console.log(err);
     };
 };
 
+exports.showUtilityByName = showUtilityByName;
 
-exports.showOneUtility = showOneUtility;
+const showUtilityById = async(req, res) => {
+    try {
+        const utility = await Utility.findById(req.params.id)
+
+        if (!utility) {
+            return res.status(400).json({message: "This Utility does not Exist"});
+        } else {
+            return res.status(200).json(utility);
+        };
+    } catch(err) {
+        console.log(err);
+    };
+};
+
+exports.showUtilityById = showUtilityById;
 
 const createUtility = async(req, res) => {
     try {
@@ -39,10 +52,10 @@ const createUtility = async(req, res) => {
         const utility = new Utility();
         utility.name = name;
         utility.image = image;
-        for (let i = 0; i < operators.length; i++) {
-            let operator = Operator.findById(operators[i]);
-            utility.operators.push(operator);
-        };
+        // for (let i = 0; i < operators.length; i++) {
+        //     let operator = Operator.findById(operators[i]);
+        //     utility.operators.push(operator);
+        // };
         utility.side = side
         utility.purpose = purpose;
 
@@ -64,7 +77,7 @@ const updateUtilityNoClass = async(req, res) => {
         const {name, image, side, purpose} = req.body;
         const fields = {name, image, side, purpose};
 
-        const utility = await Utility.findByIdAndUpdate(req.params, fields, { new: true});
+        const utility = await Utility.findByIdAndUpdate(req.params.id, fields, { new: true});
 
         return res.status(200).json(utility);
 
@@ -75,10 +88,10 @@ const updateUtilityNoClass = async(req, res) => {
 
 exports.updateUtilityNoClass = updateUtilityNoClass;
 
-const deleteAndUpdateUtility = async(req, res) => {
+const deleteAndUpdateOperator = async(req, res) => {
     try {
         const {first, second} = req.body;
-        const utility = await Utility.findById(req.params);
+        const utility = await Utility.findById(req.params.id);
         const removed = await Operator.findById(first);
 
         utility.operators.splice(utility.operators.indexOf(removed),1);
@@ -86,24 +99,24 @@ const deleteAndUpdateUtility = async(req, res) => {
         if (second) {
             const added = await Operator.findById(second);
             utility.operators.push(added);
-        }
+        };
 
         utility.save()
             .catch((err) => {
                 console.log(err.message);
             });
 
-        return res.status(200).json(operator);
+        return res.status(200).json(utility);
     } catch(err) {
         console.log(err);
     };
 };
 
-exports.deleteAndUpdateUtility = deleteAndUpdateUtility;
+exports.deleteAndUpdateOperator = deleteAndUpdateOperator;
 
 const deleteUtility = async(req, res) => {
     try {
-        await Utility.findByIdAndDelete(req.params);
+        await Utility.findByIdAndDelete(req.params.id);
 
         return res.status(200).json("Utility successfully deleted");
     } catch(err) {
@@ -111,4 +124,4 @@ const deleteUtility = async(req, res) => {
     };
 };
 
-
+exports.deleteUtility = deleteUtility;

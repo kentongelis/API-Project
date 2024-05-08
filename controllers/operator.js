@@ -12,16 +12,30 @@ const showOperators = async(req, res) => {
         return res.status(200).json(operators);
     } catch(err) {
         console.log(err);
-    }
-}
+    };
+};
 
 exports.showOperators = showOperators;
 
-const showOneOperator = async(req, res) => {
+const showOperatorByName = async(req, res) => {
     try {
-        const operator = 
-        (typeof(parseInt(req.params)) === Number) ? await Operator.findById(req.params) : 
-        (typeof(req.params) === String) ? await Operator.findOne({name: req.params}) : '';
+        const operator =  await Operator.findOne({name: req.params.name});
+        
+        if (!operator) {
+            return res.status(400).json({message: "This operator does not exist"});
+        } else {
+            return res.status(200).json(operator);
+        };
+    } catch(err) {
+        console.log(err);
+    };
+};
+
+exports.showOperatorByName = showOperatorByName;
+
+const showOperatorById = async(req, res) => {
+    try {
+        const operator = await Operator.findById(req.params.id)
 
         if (!operator) {
             return res.status(400).json({message: "This operator does not exist"});
@@ -33,7 +47,7 @@ const showOneOperator = async(req, res) => {
     };
 };
 
-exports.showOneOperator = showOneOperator;
+exports.showOperatorById = showOperatorById;
 
 const createOperator = async(req, res) => {
     console.log(req.body);
@@ -43,28 +57,28 @@ const createOperator = async(req, res) => {
         operator.name = name;
         operator.image = image;
         operator.gadget = gadget;
-        for (let i = 0; i < primaryWeapons.length; i++) {
-            let weapon = Weapon.findById(primaryWeapons[i]);
-            operator.primaryWeapons.push(weapon);
-        }
-        for (let i = 0; i < secondaryWeapons.length; i++) {
-            let weapon = Weapon.findById(secondaryWeapons[i]);
-            operator.secondaryWeapons.push(weapon);
-        }
-        for (let i = 0; i < utility.length; i++) {
-            let util = Utility.findById(utility[i]);
-            operator.utility.push(util);
-        }
+        // for (let i = 0; i < primaryWeapons.length; i++) {
+        //     let weapon = Weapon.findById(primaryWeapons[i]);
+        //     operator.primaryWeapons.push(weapon);
+        // }
+        // for (let i = 0; i < secondaryWeapons.length; i++) {
+        //     let weapon = Weapon.findById(secondaryWeapons[i]);
+        //     operator.secondaryWeapons.push(weapon);
+        // }
+        // for (let i = 0; i < utility.length; i++) {
+        //     let util = Utility.findById(utility[i]);
+        //     operator.utility.push(util);
+        // }
         operator.side = side;
         operator.org = org;
-        operator.faction = Faction.findById(faction);
+        // operator.faction = Faction.findById(faction);
 
         await operator.save()
             .catch((err) => {
                 console.log(err.message);
             });
 
-        return res.status(200).json(operator.name);
+        return res.status(200).json(operator);
     } catch(err) {
         console.log(err);
     }
@@ -77,7 +91,7 @@ const updateOperatorNoClass = async(req, res) => {
         const {name, image, gadget, side, org, faction} = req.body;
         const fields = {name, image, gadget, side, org, faction};
 
-        const operator = await Operator.findByIdAndUpdate(req.params, fields, { new: true });
+        const operator = await Operator.findByIdAndUpdate(req.params.id, fields, { new: true });
 
         return res.status(200).json(operator);
     } catch(err) {
@@ -90,7 +104,7 @@ exports.updateOperatorNoClass = updateOperatorNoClass;
 const deleteAndUpdateOperatorPrimaryWeapon = async(req, res) => {
     try {
         const {first, second} = req.body;
-        const operator = await Operator.findById(req.params);
+        const operator = await Operator.findById(req.params.id);
         const removed = await Weapon.findById(first);
 
         operator.primaryWeapons.splice(operator.primaryWeapons.indexOf(removed),1);
@@ -116,7 +130,7 @@ exports.deleteAndUpdateOperatorPrimaryWeapon = deleteAndUpdateOperatorPrimaryWea
 const deleteAndUpdateOperatorSecondaryWeapon = async(req, res) => {
     try {
         const {first, second} = req.body;
-        const operator = await Operator.findById(req.params);
+        const operator = await Operator.findById(req.params.id);
         const removed = await Weapon.findById(first);
 
         operator.secondaryWeapons.splice(operator.secondaryWeapons.indexOf(removed),1);
@@ -142,7 +156,7 @@ exports.deleteAndUpdateOperatorSecondaryWeapon = deleteAndUpdateOperatorSecondar
 const deleteAndUpdateUtility = async(req,res) => {
     try {
         const {first, second} = req.body;
-        const operator = await Operator.findById(req.params);
+        const operator = await Operator.findById(req.params.id);
         const removed = await Utility.findById(first);
 
         operator.utility.splice(operator.utility.indexOf(removed),1);
@@ -168,7 +182,7 @@ exports.deleteAndUpdateUtility = deleteAndUpdateUtility;
 const deleteAndUpdateFaction = async(req, res) => {
     try {
         const {first, second} = req.body;
-        const operator = await Operator.findById(req.params);
+        const operator = await Operator.findById(req.params.id);
         const removed = await Faction.findById(first);
 
         operator.faction.splice(operator.faction.indexOf(removed),1);
@@ -192,8 +206,9 @@ const deleteAndUpdateFaction = async(req, res) => {
 exports.deleteAndUpdateFaction = deleteAndUpdateFaction;
 
 const deleteOperator = async(req, res) => {
+    console.log(req.params.id)
     try {
-        await Operator.findByIdAndDelete(req.params);
+        await Operator.findByIdAndDelete(req.params.id);
 
         return res.status(200).json("Operator successfully deleted");
     } catch(err) {
