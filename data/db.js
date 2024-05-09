@@ -6,7 +6,7 @@ assert = require('assert');
 mongoose.set('strictQuery', false);
 
 
-const url = 'mongodb://0.0.0.0:27017/rainbowapi';
+const url = 'mongodb://127.0.0.1:27017/rainbowapi';
 mongoose.connect(
     url,
     {
