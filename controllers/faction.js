@@ -37,7 +37,7 @@ const showFactionById = async(req, res) => {
         if (!faction) {
             return res.status(400).json({message: "This Faction does not Exist"});
         } else {
-            return res.status(200).json(utility);
+            return res.status(200).json(faction);
         };
     } catch(err) {
         console.log(err);
@@ -47,81 +47,98 @@ const showFactionById = async(req, res) => {
 exports.showFactionById = showFactionById;
 
 const createFaction = async(req, res) => {
-    try {
-        const {name, image, operators} = req.body;
-        const faction = new Faction();
-        faction.name = name;
-        faction.image = image;
-        if (operators) {
-            for (let i = 0; i < operators.length; i++) {
-                let operator = Operator.findById(operators[i]);
-                faction.operators.push(operator);
+    if (req.user) {
+        try {
+            const {name, image, operators} = req.body;
+            const faction = new Faction();
+            faction.name = name;
+            faction.image = image;
+            if (operators) {
+                for (let i = 0; i < operators.length; i++) {
+                    let operator = Operator.findOne({name:operators[i]});
+                    faction.operators.push(operator);
+                };
             };
-        };
 
-        await faction.save()
-            .catch((err) => {
-                console.log(err.message);
-            });
-            
-        return res.status(200).json(faction);
-    } catch(err) {
-        console.log(err);
+            await faction.save()
+                .catch((err) => {
+                    console.log(err.message);
+                });
+                
+            return res.status(200).json(faction);
+        } catch(err) {
+            console.log(err);
+        };
+    } else {
+        return res.status(401).json("Please log in or sign up to complete this action");
     };
 };
 
 exports.createFaction = createFaction;
 
 const updateFactionNoClass = async(req, res) => {
-    try {
-        const {name, image} = req.body;
-        const fields = {name, image};
+    if (req.user) {
+        try {
+            const {name, image} = req.body;
+            const fields = {name, image};
 
-        const Ffction = await Faction.findByIdAndUpdate(req.params.id, fields, { new: true});
+            const faction = await Faction.findByIdAndUpdate(req.params.id, fields, { new: true});
 
-        return res.status(200).json(faction);
-    } catch(err) {
-        console.log(err);
+            return res.status(200).json(faction);
+        } catch(err) {
+            console.log(err);
+        };
+    } else {
+        return res.status(401).json("Please log in or sign up to complete this action");
     };
 };
 
 exports.updateFactionNoClass = updateFactionNoClass;
 
 const deleteAndUpdateOperator = async(req, res) => {
-    try {
-        const {first, second} = req.body;
-        const faction  = await Faction.findById(req.params.id);
+    if (req.user) {
+        console.log(req.body)
+        try {
+            const {first, second} = req.body;
+            const faction  = await Faction.findById(req.params.id).populate("operators");
 
-        if (first) {
-            const removed = await Operator.findById(first);
-            faction.operators.splice(faction.operators.indexOf(removed), 1);
-        }
+            if (first) {
+                const removed = await Operator.findOne({name:first});
+                faction.operators.splice(faction.operators.indexOf(removed), 1);
+            }
 
-        if (second) {
-            const added = await Operator.findById(second);
-            faction.operators.push(added);
+            if (second) {
+                const added = await Operator.findOne({name:second});
+                faction.operators.push(added);
+            };
+
+            faction.save()
+                .catch((err) => {
+                    console.log(err.message);
+                });
+
+            return res.status(200).json(faction);
+        } catch(err) {
+            console.log(err);
         };
-
-        faction.save()
-            .catch((err) => {
-                console.log(err.message);
-            });
-
-        return res.status(200).json(faction);
-    } catch(err) {
-        console.log(err);
+    } else {
+        return res.status(401).json("Please log in or sign up to complete this action");
     };
 };
 
 exports.deleteAndUpdateOperator = deleteAndUpdateOperator;
 
 const deleteFaction = async(req, res) => {
-    try {
-        await Faction.findByIdAndDelete(req.params.id);
+    if (req.user) {
+        try {
+            await Faction.findByIdAndDelete(req.params.id);
 
-        return res.status(200).json("Faction successfully deleted");
-    } catch(err) {
-        console.log(err);
+            return res.status(200).json("Faction successfully deleted");
+        } catch(err) {
+            console.log(err);
+        };
+    } else {
+        return res.status(401).json("Please log in or sign up to complete this action");
     };
 };
 

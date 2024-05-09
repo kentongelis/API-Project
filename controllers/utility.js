@@ -47,84 +47,100 @@ const showUtilityById = async(req, res) => {
 exports.showUtilityById = showUtilityById;
 
 const createUtility = async(req, res) => {
-    try {
-        const {name, image, operators, side, purpose} = req.body;
-        const utility = new Utility();
-        utility.name = name;
-        utility.image = image;
-        if (operators) {
-            for (let i = 0; i < operators.length; i++) {
-                let operator = Operator.findById(operators[i]);
-                utility.operators.push(operator);
+    if (req.user) {
+        try {
+            const {name, image, operators, side, purpose} = req.body;
+            const utility = new Utility();
+            utility.name = name;
+            utility.image = image;
+            if (operators) {
+                for (let i = 0; i < operators.length; i++) {
+                    let operator = Operator.findOne({name:operators[i]});
+                    utility.operators.push(operator);
+                };
             };
+            utility.side = side
+            utility.purpose = purpose;
+
+            await utility.save()
+                .catch((err) => {
+                    console.log(err.message);
+                });
+
+            return res.status(200).json(utility);
+        } catch(err) {
+            console.log(err);
         };
-        utility.side = side
-        utility.purpose = purpose;
-
-        await utility.save()
-            .catch((err) => {
-                console.log(err.message);
-            });
-
-        return res.status(200).json(utility);
-    } catch(err) {
-        console.log(err);
+    } else {
+        return res.status(401).json("Please log in or sign up to complete this action");
     };
 };
 
 exports.createUtility = createUtility;
 
 const updateUtilityNoClass = async(req, res) => {
-    try {
-        const {name, image, side, purpose} = req.body;
-        const fields = {name, image, side, purpose};
+    if (req.user) {
+        try {
+            const {name, image, side, purpose} = req.body;
+            const fields = {name, image, side, purpose};
 
-        const utility = await Utility.findByIdAndUpdate(req.params.id, fields, { new: true});
+            const utility = await Utility.findByIdAndUpdate(req.params.id, fields, { new: true});
 
-        return res.status(200).json(utility);
+            return res.status(200).json(utility);
 
-    } catch(err) {
-        console.log(err);
+        } catch(err) {
+            console.log(err);
+        };
+    } else {
+        return res.status(401).json("Please log in or sign up to complete this action");
     };
 };
 
 exports.updateUtilityNoClass = updateUtilityNoClass;
 
 const deleteAndUpdateOperator = async(req, res) => {
-    try {
-        const {first, second} = req.body;
-        const utility = await Utility.findById(req.params.id);
-        
-        if (first) {
-            const removed = await Operator.findById(first);
-            utility.operators.splice(utility.operators.indexOf(removed),1);
+    if (req.user) {
+        try {
+            const {first, second} = req.body;
+            const utility = await Utility.findById(req.params.id);
+            
+            if (first) {
+                const removed = await Operator.findOne({name:first});
+                utility.operators.splice(utility.operators.indexOf(removed),1);
+            };
+
+            if (second) {
+                const added = await Operator.findOne({name:second});
+                utility.operators.push(added);
+            };
+
+            utility.save()
+                .catch((err) => {
+                    console.log(err.message);
+                });
+
+            return res.status(200).json(utility);
+        } catch(err) {
+            console.log(err);
         };
-
-        if (second) {
-            const added = await Operator.findById(second);
-            utility.operators.push(added);
-        };
-
-        utility.save()
-            .catch((err) => {
-                console.log(err.message);
-            });
-
-        return res.status(200).json(utility);
-    } catch(err) {
-        console.log(err);
+    } else {
+        return res.status(401).json("Please log in or sign up to complete this action");
     };
 };
 
 exports.deleteAndUpdateOperator = deleteAndUpdateOperator;
 
 const deleteUtility = async(req, res) => {
-    try {
-        await Utility.findByIdAndDelete(req.params.id);
+    if (req.user) {
+        try {
+            await Utility.findByIdAndDelete(req.params.id);
 
-        return res.status(200).json("Utility successfully deleted");
-    } catch(err) {
-        console.log(err);
+            return res.status(200).json("Utility successfully deleted");
+        } catch(err) {
+            console.log(err);
+        };
+    } else {
+        return res.status(401).json("Please log in or sign up to complete this action");
     };
 };
 

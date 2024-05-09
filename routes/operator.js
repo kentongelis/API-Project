@@ -3,10 +3,10 @@ const { showOperators,
         showOperatorById,
         createOperator,
         updateOperatorNoClass,
+        updateOperatorFaction,
         deleteAndUpdateOperatorPrimaryWeapon,
         deleteAndUpdateOperatorSecondaryWeapon,
         deleteAndUpdateUtility,
-        deleteAndUpdateFaction,
         deleteOperator} 
     = require('../controllers/operator');
 const express = require('express');
@@ -26,7 +26,7 @@ router.put(`${base}/update/:id`, updateOperatorNoClass);
 router.put(`${base}/update/primary/:id`, deleteAndUpdateOperatorPrimaryWeapon);
 router.put(`${base}/update/secondary/:id`, deleteAndUpdateOperatorSecondaryWeapon);
 router.put(`${base}/update/utility/:id`, deleteAndUpdateUtility);
-router.put(`${base}/update/faction/:id`, deleteAndUpdateFaction);
+router.put(`${base}/update/faction/:id`, updateOperatorFaction);
 router.delete(`${base}/delete/:id`, deleteOperator);
 
 module.exports = router;

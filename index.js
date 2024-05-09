@@ -35,11 +35,13 @@ const operatorRouter = require('./routes/operator');
 const weaponRouter = require('./routes/weapon');
 const utilityRouter = require('./routes/utility');
 const factionRouter = require('./routes/faction');
+const authRouter = require('./routes/auth');
 
 app.use(operatorRouter);
 app.use(weaponRouter);
 app.use(utilityRouter);
 app.use(factionRouter);
+app.use(authRouter);
 
 app.listen(3000, () => {
     console.log('API listening on port http://localhost:3000!');
