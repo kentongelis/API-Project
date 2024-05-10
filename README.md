@@ -8,4 +8,4 @@ There are 4 categories in the Rainbow API
 
 You can get json of each category with a GET request
 
-![Alt text](Screenshot 2024-05-09 at 5.03.16 PM.png)
+![Alt text](/Users/kentongelis/Desktop/ACS 2230/API Project/Screenshot 2024-05-09 at 5.03.16 PM.png)
