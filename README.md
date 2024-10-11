@@ -1,4 +1,17 @@
-<bg>Welcome to the Tom Clancy's Rainbow Six Siege API.</bg>
+![Static Badge]https://img.shields.io/badge/build%20status-complete-green
+![Static Badge]https://img.shields.io/badge/monitoring%20status-running-green
+
+<bg>How to run the Container</bg>
+
+First, download the Docker Desktop application here: [text](https://www.docker.com/products/docker-desktop/)
+
+Download this repo and in the terminal for the parent directory, execute the command 'docker compose up"
+
+This api will then be avaiable at http://localhost:4000/
+
+<bg>API DOCUMENTATION</bg>
+
+Welcome to the Tom Clancy's Rainbow Six Siege API.
 
 This is a free API that can be accessed by anybody but can only be updated by those who are authenticated.
 
@@ -11,7 +24,7 @@ To sign up and login, use /signup and /login while submitting the JSON below
 
 Using the /logout route logs you out
 
-The base route for the API is "http://localhost:3000/"
+The base route for the API without dockerization is "http://localhost:3000/"
 
 There are 4 categories in the Rainbow API
 
