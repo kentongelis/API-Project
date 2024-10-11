@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  mongo_db:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo_db:/data/db
+
+  api:
+    build: .
+    ports:
+      - 4000:3000
+    environment:
+      SECRET: shomerandomehashvalue
+      MONGOCONNECTION: mongodb://mongo_db/rainbowapi
+    depends_on:
+      - mongo_db
+
+volumes:
+  mongo_db: {}
