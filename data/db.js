@@ -10,7 +10,7 @@ const url = process.env.MONGOCONNECTION;
 mongoose.connect(
     url,
     {
-        useNewUrlParser : true, useUnifiedTopology: true,
+        useNewUrlParser : true, useUnifiedTopology: true
     },
     function(err, db) {
         assert.equal(null, err);
